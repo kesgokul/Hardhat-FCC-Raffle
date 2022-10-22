@@ -18,7 +18,7 @@ error Raffle__UpKeepNotNeeded();
 /**
  * @title A simple raffle contract
  * @author Gokul
- * @dev This contract used ChainLink DON for randomness and automation.
+ * @dev This contract used ChainLink DON for randomness and automation(Keepers).
  */
 
 contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
@@ -52,7 +52,7 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
         uint32 _callbackGasLimit,
         uint64 _subscriptionId,
         bytes32 _gasLane,
-        address VRFCoordinatorAddress,
+        address VRFCoordinatorAddress, // contract address
         uint256 _entranceFee
     ) VRFConsumerBaseV2(VRFCoordinatorAddress) {
         i_entranceFee = _entranceFee;
@@ -164,6 +164,14 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
 
     function getInterval() public view returns (uint256) {
         return i_interval;
+    }
+
+    function getRaffleState() public view returns (RaffleState) {
+        return s_raffleState;
+    }
+
+    function getNumPlayers() public view returns (uint256) {
+        return s_players.length;
     }
 
     // This can be a pure function since NUM_WORDS is
