@@ -10,7 +10,7 @@ This project aims to build a full stack application that will allow users to ent
 
 ## Tech used:
 
-1. Hardhat for setting up the development enviroment.
+1. `Hardhat` for setting up the development enviroment.
 2. `harhat-deploy` plugin to make deploying scripts and contracts less cumbersome as it keeps track of all deployed contracts.
 3. `@nomicfoundation/hardhat-toolbox` plugin to avail various tools such as the `gas-reporter` for gas expenditure detalis, `coverage` for analysing testing coveragea and other tools like `Chai`, `ethereum-waffle` that aid in writing tests.
 4. `@chainlink/contracts` `VRFCoordinatorV2` for randomness from the ChainLink DON.
