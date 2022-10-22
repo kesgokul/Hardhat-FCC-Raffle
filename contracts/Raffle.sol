@@ -15,6 +15,12 @@ error Raffle__TransferFailed();
 error Raffle__RaffleClosed();
 error Raffle__UpKeepNotNeeded();
 
+/**
+ * @title A simple raffle contract
+ * @author Gokul
+ * @dev This contract used ChainLink DON for randomness and automation.
+ */
+
 contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
     enum RaffleState {
         OPEN,
@@ -73,6 +79,14 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
         emit RaffleEnter(msg.sender);
     }
 
+    /**
+     * @dev This function uses the ChainLink Automation to trigger ChainLinkVRF to pick a random winner.
+     * When can upKeepNeed return true
+     * 1. Time has passed the interval
+     * 2. contract has enough balance
+     * 3. raffle state has to be open since this should not be called while already fetching a random number
+     * 4. Players is not empty
+     *  */
     function checkUpkeep(
         bytes memory /*checkData*/
     )
@@ -84,13 +98,6 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
             bytes memory /*performData*/
         )
     {
-        /**
-         * When can upKeepNeed return true
-         * 1. Time has passed the interval
-         * 2. contract has enough balance
-         * 3. raffle state has to be open since this should not be called while already fetching a random number
-         * 4. Players is not empty
-         *  */
         bool hasTimePassed = (block.timestamp - s_lastTimestamp) > i_interval;
         bool isOpen = (s_raffleState == RaffleState.OPEN);
         bool hasBalance = address(this).balance > 0;
@@ -100,6 +107,10 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
     }
 
     // Getting randon number using chainLink VRF
+    /**
+     * @dev this Function is triggered when checkUpKeep returns true.
+     * It calls the ChainLinkVRF contract to get a random number.
+     */
     function performUpkeep(
         bytes memory /*performData*/
     ) external {
@@ -133,6 +144,7 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
         //reset players, raffleState and timestamp
         s_players = new address payable[](0);
         s_raffleState = RaffleState.OPEN;
+        s_lastTimestamp = block.timestamp;
 
         emit WinnerPicked(raffleWinner);
     }
@@ -152,5 +164,11 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
 
     function getInterval() public view returns (uint256) {
         return i_interval;
+    }
+
+    // This can be a pure function since NUM_WORDS is
+    // a contrant and it's stored in the byte code. No read from the contract
+    function getNumWords() public pure returns (uint32) {
+        return NUM_WORDS;
     }
 }
