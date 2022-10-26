@@ -198,10 +198,10 @@ describe("Raffle", function () {
             assert(latestTimestamp > startingTimestamp);
             assert.equal(numPlayers.toNumber(), 0);
             assert.equal(recentWinner.toString(), winnerAccount.address);
+            resolve();
           } catch (e) {
             reject(e);
           }
-          resolve();
         });
         // set up the event to be fired
         const tx = await raffle.performUpkeep([]);

@@ -1,3 +1,6 @@
 node_modules
 aritifacts
 cache
+coverage
+gas-report.txt
+.env

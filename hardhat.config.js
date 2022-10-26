@@ -21,8 +21,12 @@ module.exports = {
     },
   },
   gasReporter: {
-    enabled: false,
+    enabled: true,
     outputFile: "gas-report.txt",
     token: "ETH",
+    noColors: true,
+  },
+  mocha: {
+    timeout: 300000, // 300 sec
   },
 };
