@@ -113,7 +113,7 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
      */
     function performUpkeep(
         bytes memory /*performData*/
-    ) external {
+    ) external override {
         (bool upKeepNeeded, ) = checkUpkeep("");
         if (!upKeepNeeded) {
             revert Raffle__UpKeepNotNeeded();
@@ -158,7 +158,7 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
         return s_players[index];
     }
 
-    function getLastTimeStamp() public view returns (uint256) {
+    function getLastTimestamp() public view returns (uint256) {
         return s_lastTimestamp;
     }
 
@@ -172,6 +172,10 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
 
     function getNumPlayers() public view returns (uint256) {
         return s_players.length;
+    }
+
+    function getRecentWinner() public view returns (address) {
+        return s_recentWinner;
     }
 
     // This can be a pure function since NUM_WORDS is

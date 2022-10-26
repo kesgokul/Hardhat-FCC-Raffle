@@ -5,7 +5,7 @@ const { verify } = require("../utils/verify");
 const VRF_FUND_AMOUNT = ethers.utils.parseEther("2");
 
 async function deployFunc({ getNamedAccounts, deployments }) {
-  const { deploy } = deployments;
+  const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
   const chainId = network.config.chainId;
   let VRFCoordinatorAddress, SUB_ID;
@@ -24,7 +24,7 @@ async function deployFunc({ getNamedAccounts, deployments }) {
     VRFCoordinatorAddress = VRFCoordinatorV2Mock.address;
     const transactionResponse = await VRFCoordinatorV2Mock.createSubscription();
     const transactionResceipt = await transactionResponse.wait(1);
-    const subId = transactionResceipt.event[0].args.subId;
+    const subId = transactionResceipt.events[0].args.subId;
     SUB_ID = subId;
     await VRFCoordinatorV2Mock.fundSubscription(subId, VRF_FUND_AMOUNT);
   } else {
@@ -40,8 +40,8 @@ async function deployFunc({ getNamedAccounts, deployments }) {
   const INTERVAL = networkConfig[chainId]["interval"];
 
   const args = [
-    _interval,
-    _callbackGasLimit,
+    INTERVAL,
+    CALLBACK_GAS_LIMIT,
     SUB_ID,
     GAS_LANE,
     VRFCoordinatorAddress,
@@ -54,8 +54,16 @@ async function deployFunc({ getNamedAccounts, deployments }) {
     from: deployer,
     args: args,
     log: true,
-    waitConfirmations: 6,
+    waitConfirmations: networkConfig[chainId]["blockConfirmations"] || 1,
   });
+
+  if (chainId == 31337) {
+    const VRFCoordinatorV2Mock = await ethers.getContract(
+      "VRFCoordinatorV2Mock"
+    );
+    await VRFCoordinatorV2Mock.addConsumer(SUB_ID.toNumber(), raffle.address);
+    log("Consumer added");
+  }
 
   if (chainId != 31337) {
     log("Verifying...");
@@ -67,8 +75,8 @@ async function deployFunc({ getNamedAccounts, deployments }) {
 module.exports = deployFunc;
 module.exports.tags = ["all", "raffle"];
 
-//args
-// uint256 _interval,
+//          args
+//         uint256 _interval,
 //         uint32 _callbackGasLimit,
 //         uint64 _subscriptionId,
 //         bytes32 _gasLane,

@@ -1,6 +1,7 @@
 require("hardhat-deploy");
 require("@nomiclabs/hardhat-ethers");
 require("dotenv").config();
+require("@nomicfoundation/hardhat-toolbox");
 /** @type import('hardhat/config').HardhatUserConfig */
 
 module.exports = {
@@ -18,5 +19,10 @@ module.exports = {
     player: {
       default: 1,
     },
+  },
+  gasReporter: {
+    enabled: false,
+    outputFile: "gas-report.txt",
+    token: "ETH",
   },
 };

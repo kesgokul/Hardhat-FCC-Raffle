@@ -23,4 +23,4 @@ const networkConfig = {
 
 const developmentChains = ["localhost", "hardhat"];
 
-module.export = { developmentChains, networkConfig };
+module.exports = { developmentChains, networkConfig };
